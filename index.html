@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paint Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #f0f0f0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #222;
+      padding: 2rem;
+      border-radius: 10px;
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+    }
+    input[type="number"] {
+      width: 100px;
+    }
+    fieldset {
+      margin-top: 1rem;
+      border: 1px solid #444;
+      padding: 1rem;
+    }
+    .conditional {
+      display: none;
+      margin-top: 1rem;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.5rem 1rem;
+      background-color: #444;
+      border: none;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    pre {
+      margin-top: 2rem;
+      background: #333;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Paint Calculator</h1>
+
+    <label>Wall Length (m): <input type="number" id="length" /></label>
+    <label>Wall Height (m): <input type="number" id="height" /></label>
+
+<h3>Select percentage to be painted</h3>
+<div id="percentageButtons" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 1rem;">
+  <label><input type="radio" name="percentage" value="50" /> 50%</label>
+  <label><input type="radio" name="percentage" value="60" /> 60%</label>
+  <label><input type="radio" name="percentage" value="70" /> 70%</label>
+  <label><input type="radio" name="percentage" value="80" /> 80%</label>
+  <label><input type="radio" name="percentage" value="90" /> 90%</label>
+  <label><input type="radio" name="percentage" value="100" /> 100%</label>
+</div>
+
+
+    <fieldset>
+      <legend>Project Type</legend>
+      <label><input type="radio" name="project" value="new" /> New Construction</label>
+      <label><input type="radio" name="project" value="renovation" /> Renovation</label>
+    
+
+    
+<fieldset id="skimmingOptions" class="conditional">
+  <legend>Skimming</legend>
+  <label><input type="radio" name="skimming" value="yes" /> Skimming Needed</label>
+  <label><input type="radio" name="skimming" value="no" /> No Skimming</label>
+</fieldset>
+
+
+    
+<fieldset id="smoothOptions" class="conditional">
+  <legend>Wall Smoothness</legend>
+  <label><input type="radio" name="smooth" value="yes" /> Wall is Smooth</label>
+  <label><input type="radio" name="smooth" value="no" /> Wall is Rough</label>
+</fieldset>
+
+
+    
+<div id="percentageButtons" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 1rem;">
+  
+  
+  
+  
+  
+  
+</div>
+
+      
+    
+    
+    
+    
+    
+      
+      
+    </fieldset>
+
+    <button onclick="calculate()">Calculate</button>
+    <button onclick="window.print()">🖨️ Print Quotation</button>
+
+    <pre id="result"></pre>
+  </div>
+
+  <script>
+    const UNDERCOAT_SPREAD = 9.0;
+    const TOPCOAT_SPREAD = 9.0;
+    const TOPCOAT_COATS = 2;
+    const SKIM_COAT_NEW = 16.0;
+    const SKIM_COAT_RENO = 20.0;
+
+    document.querySelectorAll('input[name="project"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        document.getElementById('skimmingOptions').style.display = radio.value === 'new' ? 'block' : 'none';
+        document.getElementById('smoothOptions').style.display = radio.value === 'renovation' ? 'block' : 'none';
+      });
+    });
+
+    function calculate() {
+      const length = parseFloat(document.getElementById('length').value);
+      const height = parseFloat(document.getElementById('height').value);
+      const result = document.getElementById('result');
+      result.textContent = '';
+
+      if (!length || !height || length <= 0 || height <= 0) {
+        result.textContent = 'Please enter valid positive numbers for length and height.';
+        return;
+      }
+
+      const wallArea = length * height;
+      const percentage = parseInt(document.querySelector('input[name="percentage"]:checked')?.value || 0);
+      if (!percentage) {
+        result.textContent = 'Please select percentage to paint.';
+        return;
+      }
+
+      const effectiveArea = wallArea * (percentage / 100);
+      const project = document.querySelector('input[name="project"]:checked')?.value;
+
+      if (!project) {
+        result.textContent = 'Please select project type.';
+        return;
+      }
+
+      let output = `Wall Area to Paint: ${effectiveArea.toFixed(2)} m²\n`;
+
+      if (project === 'new') {
+        const skim = document.querySelector('input[name="skimming"]:checked')?.value;
+        if (!skim) {
+          result.textContent = 'Please select skimming option.';
+          return;
+        }
+
+        if (skim === 'yes') {
+          const bags = effectiveArea / SKIM_COAT_NEW;
+          output += `Skim Coat: ${bags.toFixed(2)} bags (25kg each)\n`;
+        }
+
+        const undercoat = effectiveArea / UNDERCOAT_SPREAD;
+        const topcoat = (effectiveArea * TOPCOAT_COATS) / TOPCOAT_SPREAD;
+        output += `Undercoat: ${undercoat.toFixed(2)} L\n`;
+        output += `Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
+
+      } else if (project === 'renovation') {
+        const smooth = document.querySelector('input[name="smooth"]:checked')?.value;
+        if (!smooth) {
+          result.textContent = 'Please select wall smoothness.';
+          return;
+        }
+
+        if (smooth === 'yes') {
+          const topcoat = (effectiveArea * 2) / TOPCOAT_SPREAD;
+          output += `Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
+        } else {
+          const skimConfirm = confirm("Do you want to skim the rough wall?");
+          if (skimConfirm) {
+            const skimBags = effectiveArea / SKIM_COAT_RENO;
+            const undercoat = effectiveArea / UNDERCOAT_SPREAD;
+            const topcoat = (effectiveArea * 2) / TOPCOAT_SPREAD;
+            output += `Skim Coat: ${skimBags.toFixed(2)} bags (25kg each)\n`;
+            output += `Undercoat: ${undercoat.toFixed(2)} L\n`;
+            output += `Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
+          } else {
+            const undercoat = effectiveArea / UNDERCOAT_SPREAD;
+            const topcoat = (effectiveArea * 2) / TOPCOAT_SPREAD;
+            output += `Undercoat: ${undercoat.toFixed(2)} L\n`;
+            output += `Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
+          }
+        }
+      }
+
+      output += "\n\nNote: Spread rate is 9 m²/L. Includes estimated spillages and 10% wastage.";
+      result.textContent = output;
+    }
+  </script>
+</body>
+</html>
