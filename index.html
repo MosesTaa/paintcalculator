@@ -2,128 +2,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Paint Calculator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STANDARD PAINT ESTIMATOR</title>
   <style>
     body {
+      background-color: #121212;
+      color: #ffffff;
       font-family: Arial, sans-serif;
-      background: #111;
-      color: #f0f0f0;
-      padding: 2rem;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
     }
+
     .container {
-      max-width: 600px;
-      margin: auto;
-      background: #222;
-      padding: 2rem;
+      max-width: 800px;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      background-color: #1e1e1e;
+      border: 1px solid #333;
       border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     }
-    label {
-      display: block;
-      margin: 1rem 0 0.5rem;
-    }
-    input[type="number"] {
-      width: 100px;
-    }
-    fieldset {
-      margin-top: 1rem;
-      border: 1px solid #444;
-      padding: 1rem;
-    }
-    .conditional {
-      display: none;
-      margin-top: 1rem;
-    }
-    button {
-      margin-top: 1.5rem;
-      padding: 0.5rem 1rem;
-      background-color: #444;
-      border: none;
+
+    input, select, button {
+      background-color: #2a2a2a;
       color: #fff;
-      border-radius: 5px;
-      cursor: pointer;
+      border: 1px solid #444;
+      padding: 8px;
+      margin: 4px 0;
+      width: 100%;
+      box-sizing: border-box;
     }
+
+    input[type="radio"] {
+      width: auto;
+      margin-right: 6px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+
+    .percentage-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .group {
+      margin-bottom: 20px;
+    }
+
     pre {
-      margin-top: 2rem;
-      background: #333;
-      padding: 1rem;
-      border-radius: 8px;
+      background-color: #1e1e1e;
+      padding: 10px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 28px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    @media (min-width: 600px) {
+      .button-group {
+        flex-direction: row;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Paint Calculator</h1>
+    <h2>STANDARD PAINT ESTIMATOR</h2>
 
-    <label>Wall Length (m): <input type="number" id="length" /></label>
-    <label>Wall Height (m): <input type="number" id="height" /></label>
+    <div class="group">
+      <label for="unit">Select Unit:</label>
+      <select id="unit">
+        <option value="meters" selected>Meters</option>
+        <option value="feet">Feet</option>
+      </select>
+    </div>
 
-<h3>Select percentage to be painted</h3>
-<div id="percentageButtons" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 1rem;">
-  <label><input type="radio" name="percentage" value="50" /> 50%</label>
-  <label><input type="radio" name="percentage" value="60" /> 60%</label>
-  <label><input type="radio" name="percentage" value="70" /> 70%</label>
-  <label><input type="radio" name="percentage" value="80" /> 80%</label>
-  <label><input type="radio" name="percentage" value="90" /> 90%</label>
-  <label><input type="radio" name="percentage" value="100" /> 100%</label>
-</div>
+    <div class="group">
+      <label for="length">Wall Length (m):</label>
+      <input type="number" id="length" step="any">
 
+      <label for="height">Wall Height (m):</label>
+      <input type="number" id="height" step="any">
+    </div>
 
-    <fieldset>
-      <legend>Project Type</legend>
-      <label><input type="radio" name="project" value="new" /> New Construction</label>
-      <label><input type="radio" name="project" value="renovation" /> Renovation</label>
-    
+    <div class="group">
+      <label>Select percentage to be painted</label>
+      <div class="percentage-options">
+        <label><input type="radio" name="percentage" value="50"> 50%</label>
+        <label><input type="radio" name="percentage" value="60"> 60%</label>
+        <label><input type="radio" name="percentage" value="70"> 70%</label>
+        <label><input type="radio" name="percentage" value="80"> 80%</label>
+        <label><input type="radio" name="percentage" value="90"> 90%</label>
+        <label><input type="radio" name="percentage" value="100"> 100%</label>
+      </div>
+    </div>
 
-    
-<fieldset id="skimmingOptions" class="conditional">
-  <legend>Skimming</legend>
-  <label><input type="radio" name="skimming" value="yes" /> Skimming Needed</label>
-  <label><input type="radio" name="skimming" value="no" /> No Skimming</label>
-</fieldset>
+    <div class="group">
+      <label>Project Type</label><br>
+      <input type="radio" name="project" value="new"> New Construction
+      <input type="radio" name="project" value="renovation"> Renovation
+    </div>
 
+    <div id="skimmingOptions" class="group" style="display:none;">
+      <label>Skimming required?</label><br>
+      <input type="radio" name="skimming" value="yes"> Yes
+      <input type="radio" name="skimming" value="no"> No
+    </div>
 
-    
-<fieldset id="smoothOptions" class="conditional">
-  <legend>Wall Smoothness</legend>
-  <label><input type="radio" name="smooth" value="yes" /> Wall is Smooth</label>
-  <label><input type="radio" name="smooth" value="no" /> Wall is Rough</label>
-</fieldset>
+    <div id="smoothOptions" class="group" style="display:none;">
+      <label>Wall Smoothness</label><br>
+      <input type="radio" name="smooth" value="yes"> Yes
+      <input type="radio" name="smooth" value="no"> No
+    </div>
 
-
-    
-<div id="percentageButtons" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 1rem;">
-  
-  
-  
-  
-  
-  
-</div>
-
-      
-    
-    
-    
-    
-    
-      
-      
-    </fieldset>
-
-    <button onclick="calculate()">Calculate</button>
-    <button onclick="window.print()">🖨️ Print Quotation</button>
+    <div class="button-group">
+      <button onclick="calculate()">Calculate</button>
+      <button onclick="exportPDF()">Export as PDF</button>
+    </div>
 
     <pre id="result"></pre>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     const UNDERCOAT_SPREAD = 9.0;
     const TOPCOAT_SPREAD = 9.0;
     const TOPCOAT_COATS = 2;
     const SKIM_COAT_NEW = 16.0;
     const SKIM_COAT_RENO = 20.0;
+    const FEET_TO_METERS = 0.3048;
 
     document.querySelectorAll('input[name="project"]').forEach(radio => {
       radio.addEventListener('change', () => {
@@ -133,28 +159,33 @@
     });
 
     function calculate() {
-      const length = parseFloat(document.getElementById('length').value);
-      const height = parseFloat(document.getElementById('height').value);
+      const unit = document.getElementById('unit').value;
+      let length = parseFloat(document.getElementById('length').value);
+      let height = parseFloat(document.getElementById('height').value);
       const result = document.getElementById('result');
       result.textContent = '';
 
-      if (!length || !height || length <= 0 || height <= 0) {
+      if (isNaN(length) || isNaN(height) || length <= 0 || height <= 0) {
         result.textContent = 'Please enter valid positive numbers for length and height.';
         return;
+      }
+
+      if (unit === 'feet') {
+        length *= FEET_TO_METERS;
+        height *= FEET_TO_METERS;
       }
 
       const wallArea = length * height;
       const percentage = parseInt(document.querySelector('input[name="percentage"]:checked')?.value || 0);
       if (!percentage) {
-        result.textContent = 'Please select percentage to paint.';
+        result.textContent = 'Please select the percentage to paint.';
         return;
       }
 
       const effectiveArea = wallArea * (percentage / 100);
       const project = document.querySelector('input[name="project"]:checked')?.value;
-
       if (!project) {
-        result.textContent = 'Please select project type.';
+        result.textContent = 'Please select a project type.';
         return;
       }
 
@@ -163,7 +194,7 @@
       if (project === 'new') {
         const skim = document.querySelector('input[name="skimming"]:checked')?.value;
         if (!skim) {
-          result.textContent = 'Please select skimming option.';
+          result.textContent = 'Please select a skimming option.';
           return;
         }
 
@@ -184,29 +215,36 @@
           return;
         }
 
+        const undercoat = effectiveArea / UNDERCOAT_SPREAD;
+        const topcoat = (effectiveArea * TOPCOAT_COATS) / TOPCOAT_SPREAD;
+
         if (smooth === 'yes') {
-          const topcoat = (effectiveArea * 2) / TOPCOAT_SPREAD;
-          output += `Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
+          output += `Undercoat (1 coat): ${undercoat.toFixed(2)} L\n`;
+          output += `Silk Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
         } else {
           const skimConfirm = confirm("Do you want to skim the rough wall?");
           if (skimConfirm) {
             const skimBags = effectiveArea / SKIM_COAT_RENO;
-            const undercoat = effectiveArea / UNDERCOAT_SPREAD;
-            const topcoat = (effectiveArea * 2) / TOPCOAT_SPREAD;
             output += `Skim Coat: ${skimBags.toFixed(2)} bags (25kg each)\n`;
-            output += `Undercoat: ${undercoat.toFixed(2)} L\n`;
-            output += `Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
-          } else {
-            const undercoat = effectiveArea / UNDERCOAT_SPREAD;
-            const topcoat = (effectiveArea * 2) / TOPCOAT_SPREAD;
-            output += `Undercoat: ${undercoat.toFixed(2)} L\n`;
-            output += `Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
           }
+          output += `Undercoat: ${undercoat.toFixed(2)} L\n`;
+          output += `Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
         }
       }
 
-      output += "\n\nNote: Spread rate is 9 m²/L. Includes estimated spillages and 10% wastage.";
+      output += "\n\nNote: Spread rate is 9 m²/L for paint. Includes estimated spillages and 10% wastage.";
       result.textContent = output;
+    }
+
+    async function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const content = document.getElementById("result").textContent;
+      doc.setFont("Courier", "normal");
+      doc.setFontSize(12);
+      const lines = doc.splitTextToSize(content, 180);
+      doc.text(lines, 10, 10);
+      doc.save("paint_estimate.pdf");
     }
   </script>
 </body>
