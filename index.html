@@ -40,7 +40,7 @@
     .hidden { display: none; }
     label { display: block; margin-top: 10px; font-weight: bold; }
     table { width: 100%; margin-top: 10px; border-collapse: collapse; }
-    th, td { border: 1px solid #555; padding: 8px; text-align: center; }
+    th, td { border: 1px solid #555; padding: 8px; text-align: center; word-wrap: break-word; }
     ul { list-style: none; padding: 0; }
     ul li {
       display: flex;
@@ -53,13 +53,20 @@
     }
     ul li span button, .action-btn {
       font-size: 12px;
-      padding: 4px 6px;
-      margin-left: 4px;
+      padding: 6px 10px;
+      margin: 4px 2px;
       border-radius: 4px;
       background: #fff;
       color: #000;
       border: none;
       cursor: pointer;
+      display: block;
+      width: 100%;
+    }
+    .action-btn-container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
     #thankYouMessage {
       text-align: center;
@@ -266,7 +273,7 @@
         <td>${w.height.toFixed(2)}</td>
         <td>${w.doors}</td>
         <td>${w.windows}</td>
-        <td>
+        <td class="action-btn-container">
           <button class="action-btn" onclick="editWallDimension(${i})">Edit</button>
           <button class="action-btn" onclick="deleteWall(${i})">Delete</button>
         </td>
@@ -307,37 +314,39 @@
   }
 
   function generateQuotation() {
-    let html = '<table><tr><th>Wall</th><th>Area (m²)</th><th>Skim Coat</th><th>Undercoat</th><th>Topcoat</th></tr>';
+    let html = '<table><tr><th>Wall</th><th>Area (m²)</th>';
+    if (user.skimming === 'yes') html += '<th>Skim Coat</th>';
+    html += '<th>Undercoat</th><th>Topcoat</th></tr>';
+
     let total = { area: 0, skim: 0, under: 0, top: 0 };
 
     wallData.forEach(w => {
-      const area = w.length * w.height - (w.doors * w.doorW * w.doorH + w.windows * w.winW * w.winH);
-      const skimSpread = user.project === 'new' ? 16 : 20;
-      const skim = user.skimming === 'yes' ? area / skimSpread : 0;
-      const under = area / undercoatRate;
-      const top = (area * 2) / topcoatRate;
+      const area = w.length * w.height;
+      let deduct = 0;
+      if (w.doors > 0) deduct += w.doors * w.doorW * w.doorH;
+      if (w.windows > 0) deduct += w.windows * w.winW * w.winH;
+      const netArea = area - deduct;
 
-      total.area += area;
+      const skimSpread = user.project === 'new' ? 16 : 20;
+      const skim = user.skimming === 'yes' ? netArea / skimSpread : 0;
+      const under = netArea / undercoatRate;
+      const top = (netArea * 2) / topcoatRate;
+
+      total.area += netArea;
       total.skim += skim;
       total.under += under;
       total.top += top;
 
       html += `<tr>
         <td>${w.name}</td>
-        <td>${area.toFixed(2)}</td>
-        <td>${skim.toFixed(2)} bags</td>
-        <td>${under.toFixed(2)}L</td>
-        <td>${top.toFixed(2)}L</td>
-      </tr>`;
+        <td>${netArea.toFixed(2)}</td>`;
+      if (user.skimming === 'yes') html += `<td>${skim.toFixed(2)} bags</td>`;
+      html += `<td>${under.toFixed(2)}L</td><td>${top.toFixed(2)}L</td></tr>`;
     });
 
-    html += `<tr>
-      <th>Total</th>
-      <th>${total.area.toFixed(2)}</th>
-      <th>${total.skim.toFixed(2)} bags</th>
-      <th>${total.under.toFixed(2)}L</th>
-      <th>${total.top.toFixed(2)}L</th>
-    </tr></table>`;
+    html += `<tr><th>Total</th><th>${total.area.toFixed(2)}</th>`;
+    if (user.skimming === 'yes') html += `<th>${total.skim.toFixed(2)} bags</th>`;
+    html += `<th>${total.under.toFixed(2)}L</th><th>${total.top.toFixed(2)}L</th></tr></table>`;
 
     document.getElementById('result').innerHTML = html;
   }
@@ -362,6 +371,5 @@
     document.getElementById('result').innerHTML = '';
   }
 </script>
-
 </body>
-</html>
+  </html>
