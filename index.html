@@ -1,252 +1,367 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>STANDARD PAINT ESTIMATOR</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Standard Paint Estimator</title>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
   <style>
     body {
-      background-color: #121212;
-      color: #ffffff;
+      background: #121212;
+      color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
     }
-
     .container {
-      max-width: 800px;
-      width: 100%;
+      width: 95%;
+      max-width: 750px;
       padding: 20px;
-      box-sizing: border-box;
-      background-color: #1e1e1e;
+      margin-top: 20px;
+      background: #1e1e1e;
       border: 1px solid #333;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     }
-
+    h2, h3 {
+      text-align: center;
+    }
     input, select, button {
-      background-color: #2a2a2a;
+      width: 100%;
+      padding: 12px;
+      margin: 6px 0 12px 0;
+      background: #2a2a2a;
       color: #fff;
       border: 1px solid #444;
-      padding: 8px;
-      margin: 4px 0;
-      width: 100%;
-      box-sizing: border-box;
+      font-size: 16px;
+      border-radius: 4px;
     }
-
-    input[type="radio"] {
-      width: auto;
-      margin-right: 6px;
-    }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 10px;
-    }
-
-    .percentage-options {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .group {
-      margin-bottom: 20px;
-    }
-
-    pre {
-      background-color: #1e1e1e;
-      padding: 10px;
-      border-radius: 5px;
-      white-space: pre-wrap;
-    }
-
-    h2 {
-      text-align: center;
-      font-size: 28px;
-    }
-
-    .button-group {
+    .hidden { display: none; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    table { width: 100%; margin-top: 10px; border-collapse: collapse; }
+    th, td { border: 1px solid #555; padding: 8px; text-align: center; }
+    ul { list-style: none; padding: 0; }
+    ul li {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      justify-content: space-between;
+      background: #2a2a2a;
+      padding: 6px 10px;
+      border-radius: 5px;
+      margin-bottom: 4px;
+      align-items: center;
     }
-
-    @media (min-width: 600px) {
-      .button-group {
-        flex-direction: row;
+    ul li span button, .action-btn {
+      font-size: 12px;
+      padding: 4px 6px;
+      margin-left: 4px;
+      border-radius: 4px;
+      background: #fff;
+      color: #000;
+      border: none;
+      cursor: pointer;
+    }
+    #thankYouMessage {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    @media print {
+      button, #restartBtn {
+        display: none !important;
+      }
+      body, .container {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      #thankYouMessage {
+        display: block;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>STANDARD PAINT ESTIMATOR</h2>
-<div style="text-align:center; font-size: 12px; opacity: 0.6; margin-bottom: 20px;">Powered by Moses Ntella – Not for redistribution</div>
-
-    <div class="group">
-      <label for="unit">Select Unit:</label>
-      <select id="unit">
-        <option value="meters" selected>Meters</option>
-        <option value="feet">Feet</option>
+<div class="container">
+  <div id="page1">
+    <h2>Paint Estimator</h2>
+    <label for="name">Full Name</label>
+    <input type="text" id="fullName" placeholder="Enter your name">
+    <label for="email">Email Address</label>
+    <input type="email" id="email" placeholder="Enter your email">
+    <label>Project Type</label>
+    <select id="projectType">
+      <option value="">Select type</option>
+      <option value="new">New Construction</option>
+      <option value="renovation">Renovation</option>
+    </select>
+    <div id="skimmingGroup" class="hidden">
+      <label>Is Skimming Required?</label>
+      <select id="skimming">
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
       </select>
     </div>
-
-    <div class="group">
-      <label for="length">Wall Length (m):</label>
-      <input type="number" id="length" step="any">
-
-      <label for="height">Wall Height (m):</label>
-      <input type="number" id="height" step="any">
-    </div>
-
-    <div class="group">
-      <label>Select percentage to be painted</label>
-      <div class="percentage-options">
-        <label><input type="radio" name="percentage" value="50"> 50%</label>
-        <label><input type="radio" name="percentage" value="60"> 60%</label>
-        <label><input type="radio" name="percentage" value="70"> 70%</label>
-        <label><input type="radio" name="percentage" value="80"> 80%</label>
-        <label><input type="radio" name="percentage" value="90"> 90%</label>
-        <label><input type="radio" name="percentage" value="100"> 100%</label>
-      </div>
-    </div>
-
-    <div class="group">
-      <label>Project Type</label><br>
-      <input type="radio" name="project" value="new"> New Construction
-      <input type="radio" name="project" value="renovation"> Renovation
-    </div>
-
-    <div id="skimmingOptions" class="group" style="display:none;">
-      <label>Skimming required?</label><br>
-      <input type="radio" name="skimming" value="yes"> Yes
-      <input type="radio" name="skimming" value="no"> No
-    </div>
-
-    <div id="smoothOptions" class="group" style="display:none;">
-      <label>Wall Smoothness</label><br>
-      <input type="radio" name="smooth" value="yes"> Yes
-      <input type="radio" name="smooth" value="no"> No
-    </div>
-
-    <div class="button-group">
-      <button onclick="calculate()">Calculate</button>
-      <button onclick="exportPDF()">Export as PDF</button>
-    </div>
-
-    <pre id="result"></pre>
+    <button onclick="goToPage2()">Next</button>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script>
-    const UNDERCOAT_SPREAD = 9.0;
-    const TOPCOAT_SPREAD = 9.0;
-    const TOPCOAT_COATS = 2;
-    const SKIM_COAT_NEW = 16.0;
-    const SKIM_COAT_RENO = 20.0;
-    const FEET_TO_METERS = 0.3048;
+  <div id="page2" class="hidden">
+    <h2>Add Walls</h2>
+    <input type="text" id="wallName" placeholder="e.g. Kitchen Wall">
+    <button onclick="addWall()">Add Wall</button>
+    <ul id="wallList"></ul>
+    <button onclick="goToPage3()">Next</button>
+  </div>
 
-    document.querySelectorAll('input[name="project"]').forEach(radio => {
-      radio.addEventListener('change', () => {
-        document.getElementById('skimmingOptions').style.display = radio.value === 'new' ? 'block' : 'none';
-        document.getElementById('smoothOptions').style.display = radio.value === 'renovation' ? 'block' : 'none';
-      });
+  <div id="page3" class="hidden">
+    <h2>Enter Wall Dimensions</h2>
+    <label>Unit</label>
+    <select id="unit" onchange="renderWallDimension()">
+      <option value="meters">Meters</option>
+      <option value="feet">Feet</option>
+    </select>
+    <div id="wallDimensionForm"></div>
+  </div>
+
+  <div id="previewPage" class="hidden">
+    <h2>Preview</h2>
+    <table id="previewTable">
+      <thead>
+        <tr><th>Wall</th><th>Length</th><th>Height</th><th>Doors</th><th>Windows</th><th>Action</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button onclick="requestQuotation()">Request Quotation (KES 200)</button>
+  </div>
+
+  <div id="resultSection" class="hidden">
+    <h2>Quotation</h2>
+    <div id="result"></div>
+    <p id="thankYouMessage">Thank you for using our paint estimator!</p>
+    <button onclick="window.print()">Print</button>
+    <button id="restartBtn" onclick="restartApp()">Make Another</button>
+  </div>
+</div>
+
+<script>
+  let user = {}, walls = [], wallData = [], currentWall = 0;
+  const FEET_TO_METERS = 0.3048;
+  const undercoatRate = 9;
+  const topcoatRate = 9;
+
+  document.getElementById('projectType').addEventListener('change', () => {
+    document.getElementById('skimmingGroup').classList.remove('hidden');
+  });
+
+  function goToPage2() {
+    user.name = document.getElementById('fullName').value.trim();
+    user.email = document.getElementById('email').value.trim();
+    user.project = document.getElementById('projectType').value;
+    user.skimming = document.getElementById('skimming').value;
+
+    const emailPattern = /\S+@\S+\.\S+/;
+    if (!user.name || !emailPattern.test(user.email) || !user.project || !user.skimming) {
+      return alert("Complete all fields with valid data.");
+    }
+
+    document.getElementById('page1').classList.add('hidden');
+    document.getElementById('page2').classList.remove('hidden');
+  }
+
+  function addWall() {
+    const name = document.getElementById('wallName').value.trim();
+    if (!name || walls.includes(name)) return alert("Enter a unique wall name.");
+    walls.push(name);
+    wallData.push({ name });
+    renderWalls();
+    document.getElementById('wallName').value = "";
+  }
+
+  function renderWalls() {
+    const list = document.getElementById('wallList');
+    list.innerHTML = "";
+    walls.forEach((w, i) => {
+      list.innerHTML += `<li>${w}<span>
+        <button onclick="editWallName(${i})">Edit</button>
+        <button onclick="removeWall(${i})">Remove</button>
+      </span></li>`;
+    });
+  }
+
+  function removeWall(i) {
+    walls.splice(i, 1);
+    wallData.splice(i, 1);
+    renderWalls();
+  }
+
+  function editWallName(i) {
+    const newName = prompt("Enter new wall name", walls[i]);
+    if (newName && !walls.includes(newName)) {
+      walls[i] = newName;
+      wallData[i].name = newName;
+      renderWalls();
+    } else if (walls.includes(newName)) {
+      alert("Wall name must be unique.");
+    }
+  }
+
+  function goToPage3() {
+    if (walls.length === 0) return alert("Add at least one wall.");
+    currentWall = 0;
+    document.getElementById('page2').classList.add('hidden');
+    document.getElementById('page3').classList.remove('hidden');
+    renderWallDimension();
+  }
+
+  function renderWallDimension() {
+    const w = walls[currentWall];
+    const u = document.getElementById('unit').value;
+    const label = u === 'feet' ? 'ft' : 'm';
+    const existing = wallData[currentWall];
+    document.getElementById('wallDimensionForm').innerHTML = `
+      <h3>${w}</h3>
+      <label>Length (${label})</label><input type="number" id="length" value="${existing.length || ''}">
+      <label>Height (${label})</label><input type="number" id="height" value="${existing.height || ''}">
+      <label>Doors</label><input type="number" id="doors" value="${existing.doors || 0}">
+      <label>Avg Door Width (${label})</label><input type="number" id="doorW" value="${existing.doorW || 0.9}">
+      <label>Avg Door Height (${label})</label><input type="number" id="doorH" value="${existing.doorH || 2.1}">
+      <label>Windows</label><input type="number" id="windows" value="${existing.windows || 0}">
+      <label>Avg Window Width (${label})</label><input type="number" id="winW" value="${existing.winW || 1.2}">
+      <label>Avg Window Height (${label})</label><input type="number" id="winH" value="${existing.winH || 1.2}">
+      <button onclick="saveWallDimension()">Save Wall Data</button>
+    `;
+  }
+
+  function saveWallDimension() {
+    const conv = document.getElementById('unit').value === 'feet' ? FEET_TO_METERS : 1;
+    const l = parseFloat(document.getElementById('length').value) * conv || 0;
+    const h = parseFloat(document.getElementById('height').value) * conv || 0;
+    if (l <= 0 || h <= 0) return alert("Length and height must be valid numbers greater than zero.");
+
+    const d = parseInt(document.getElementById('doors').value) || 0;
+    const dw = parseFloat(document.getElementById('doorW').value) * conv || 0.9;
+    const dh = parseFloat(document.getElementById('doorH').value) * conv || 2.1;
+    const w = parseInt(document.getElementById('windows').value) || 0;
+    const ww = parseFloat(document.getElementById('winW').value) * conv || 1.2;
+    const wh = parseFloat(document.getElementById('winH').value) * conv || 1.2;
+
+    wallData[currentWall] = { name: walls[currentWall], length: l, height: h, doors: d, doorW: dw, doorH: dh, windows: w, winW: ww, winH: wh };
+
+    currentWall++;
+    if (currentWall < walls.length) {
+      renderWallDimension();
+    } else {
+      document.getElementById('page3').classList.add('hidden');
+      document.getElementById('previewPage').classList.remove('hidden');
+      showPreview();
+    }
+  }
+
+  function showPreview() {
+    const body = document.querySelector('#previewTable tbody');
+    body.innerHTML = '';
+    wallData.forEach((w, i) => {
+      body.innerHTML += `<tr>
+        <td>${w.name}</td>
+        <td>${w.length.toFixed(2)}</td>
+        <td>${w.height.toFixed(2)}</td>
+        <td>${w.doors}</td>
+        <td>${w.windows}</td>
+        <td>
+          <button class="action-btn" onclick="editWallDimension(${i})">Edit</button>
+          <button class="action-btn" onclick="deleteWall(${i})">Delete</button>
+        </td>
+      </tr>`;
+    });
+  }
+
+  function editWallDimension(index) {
+    currentWall = index;
+    document.getElementById('previewPage').classList.add('hidden');
+    document.getElementById('page3').classList.remove('hidden');
+    renderWallDimension();
+  }
+
+  function deleteWall(index) {
+    walls.splice(index, 1);
+    wallData.splice(index, 1);
+    showPreview();
+  }
+
+  function requestQuotation() {
+    const handler = PaystackPop.setup({
+      key: 'pk_test_4267eb88afba104984e24dd30e98880042131088',
+      email: user.email,
+      amount: 20000,
+      currency: 'KES',
+      callback: function(response) {
+        document.getElementById('previewPage').classList.add('hidden');
+        document.getElementById('resultSection').classList.remove('hidden');
+        generateQuotation();
+        alert('Payment successful: ' + response.reference);
+      },
+      onClose: function() {
+        alert('Transaction cancelled');
+      }
+    });
+    handler.openIframe();
+  }
+
+  function generateQuotation() {
+    let html = '<table><tr><th>Wall</th><th>Area (m²)</th><th>Skim Coat</th><th>Undercoat</th><th>Topcoat</th></tr>';
+    let total = { area: 0, skim: 0, under: 0, top: 0 };
+
+    wallData.forEach(w => {
+      const area = w.length * w.height - (w.doors * w.doorW * w.doorH + w.windows * w.winW * w.winH);
+      const skimSpread = user.project === 'new' ? 16 : 20;
+      const skim = user.skimming === 'yes' ? area / skimSpread : 0;
+      const under = area / undercoatRate;
+      const top = (area * 2) / topcoatRate;
+
+      total.area += area;
+      total.skim += skim;
+      total.under += under;
+      total.top += top;
+
+      html += `<tr>
+        <td>${w.name}</td>
+        <td>${area.toFixed(2)}</td>
+        <td>${skim.toFixed(2)} bags</td>
+        <td>${under.toFixed(2)}L</td>
+        <td>${top.toFixed(2)}L</td>
+      </tr>`;
     });
 
-    function calculate() {
-      const unit = document.getElementById('unit').value;
-      let length = parseFloat(document.getElementById('length').value);
-      let height = parseFloat(document.getElementById('height').value);
-      const result = document.getElementById('result');
-      result.textContent = '';
+    html += `<tr>
+      <th>Total</th>
+      <th>${total.area.toFixed(2)}</th>
+      <th>${total.skim.toFixed(2)} bags</th>
+      <th>${total.under.toFixed(2)}L</th>
+      <th>${total.top.toFixed(2)}L</th>
+    </tr></table>`;
 
-      if (isNaN(length) || isNaN(height) || length <= 0 || height <= 0) {
-        result.textContent = 'Please enter valid positive numbers for length and height.';
-        return;
-      }
+    document.getElementById('result').innerHTML = html;
+  }
 
-      if (unit === 'feet') {
-        length *= FEET_TO_METERS;
-        height *= FEET_TO_METERS;
-      }
+  function restartApp() {
+    user = {};
+    walls = [];
+    wallData = [];
+    currentWall = 0;
 
-      const wallArea = length * height;
-      const percentage = parseInt(document.querySelector('input[name="percentage"]:checked')?.value || 0);
-      if (!percentage) {
-        result.textContent = 'Please select the percentage to paint.';
-        return;
-      }
+    document.getElementById('resultSection').classList.add('hidden');
+    document.getElementById('page1').classList.remove('hidden');
+    document.getElementById('fullName').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('projectType').value = '';
+    document.getElementById('skimming').value = '';
+    document.getElementById('skimmingGroup').classList.add('hidden');
+    document.getElementById('wallList').innerHTML = '';
+    document.getElementById('wallName').value = '';
+    document.getElementById('wallDimensionForm').innerHTML = '';
+    document.getElementById('previewTable').querySelector('tbody').innerHTML = '';
+    document.getElementById('result').innerHTML = '';
+  }
+</script>
 
-      const effectiveArea = wallArea * (percentage / 100);
-      const project = document.querySelector('input[name="project"]:checked')?.value;
-      if (!project) {
-        result.textContent = 'Please select a project type.';
-        return;
-      }
-
-      let output = `Wall Area to Paint: ${effectiveArea.toFixed(2)} m²\n`;
-
-      if (project === 'new') {
-        const skim = document.querySelector('input[name="skimming"]:checked')?.value;
-        if (!skim) {
-          result.textContent = 'Please select a skimming option.';
-          return;
-        }
-
-        if (skim === 'yes') {
-          const bags = effectiveArea / SKIM_COAT_NEW;
-          output += `Skim Coat: ${bags.toFixed(2)} bags (25kg each)\n`;
-        }
-
-        const undercoat = effectiveArea / UNDERCOAT_SPREAD;
-        const topcoat = (effectiveArea * TOPCOAT_COATS) / TOPCOAT_SPREAD;
-        output += `Undercoat: ${undercoat.toFixed(2)} L\n`;
-        output += `Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
-
-      } else if (project === 'renovation') {
-        const smooth = document.querySelector('input[name="smooth"]:checked')?.value;
-        if (!smooth) {
-          result.textContent = 'Please select wall smoothness.';
-          return;
-        }
-
-        const undercoat = effectiveArea / UNDERCOAT_SPREAD;
-        const topcoat = (effectiveArea * TOPCOAT_COATS) / TOPCOAT_SPREAD;
-
-        if (smooth === 'yes') {
-          output += `Undercoat (1 coat): ${undercoat.toFixed(2)} L\n`;
-          output += `Silk Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
-        } else {
-          const skimConfirm = confirm("Do you want to skim the rough wall?");
-          if (skimConfirm) {
-            const skimBags = effectiveArea / SKIM_COAT_RENO;
-            output += `Skim Coat: ${skimBags.toFixed(2)} bags (25kg each)\n`;
-          }
-          output += `Undercoat: ${undercoat.toFixed(2)} L\n`;
-          output += `Topcoat (2 coats): ${topcoat.toFixed(2)} L`;
-        }
-      }
-
-      output += "\n\nNote: Spread rate is 9 m²/L for paint. Includes estimated spillages and 10% wastage.";
-      result.textContent = output;
-    }
-
-    async function exportPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      const content = document.getElementById("result").textContent;
-      doc.setFont("Courier", "normal");
-      doc.setFontSize(12);
-      const lines = doc.splitTextToSize(content, 180);
-      doc.text(lines, 10, 10);
-      doc.save("paint_estimate.pdf");
-    }
-  </script>
 </body>
 </html>
