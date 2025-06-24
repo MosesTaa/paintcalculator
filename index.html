@@ -116,6 +116,7 @@
     <input type="text" id="wallName" placeholder="e.g. Kitchen Wall">
     <button onclick="addWall()">Add Wall</button>
     <ul id="wallList"></ul>
+    <button onclick="backToPage1()">Back</button>
     <button onclick="goToPage3()">Next</button>
   </div>
 
@@ -127,6 +128,7 @@
       <option value="feet">Feet</option>
     </select>
     <div id="wallDimensionForm"></div>
+    <button onclick="backToPage2()">Back</button>
   </div>
 
   <div id="previewPage" class="hidden">
@@ -174,6 +176,11 @@
     document.getElementById('page2').classList.remove('hidden');
   }
 
+  function backToPage1() {
+    document.getElementById('page2').classList.add('hidden');
+    document.getElementById('page1').classList.remove('hidden');
+  }
+
   function addWall() {
     const name = document.getElementById('wallName').value.trim();
     if (!name || walls.includes(name)) return alert("Enter a unique wall name.");
@@ -219,21 +226,32 @@
     renderWallDimension();
   }
 
+  function backToPage2() {
+    document.getElementById('page3').classList.add('hidden');
+    document.getElementById('page2').classList.remove('hidden');
+  }
+
   function renderWallDimension() {
     const w = walls[currentWall];
     const u = document.getElementById('unit').value;
     const label = u === 'feet' ? 'ft' : 'm';
+
+    const defaultDoorW = u === 'feet' ? (0.9 / FEET_TO_METERS).toFixed(2) : 0.9;
+    const defaultDoorH = u === 'feet' ? (2.1 / FEET_TO_METERS).toFixed(2) : 2.1;
+    const defaultWinW = u === 'feet' ? (1.2 / FEET_TO_METERS).toFixed(2) : 1.2;
+    const defaultWinH = u === 'feet' ? (1.2 / FEET_TO_METERS).toFixed(2) : 1.2;
+
     const existing = wallData[currentWall];
     document.getElementById('wallDimensionForm').innerHTML = `
       <h3>${w}</h3>
       <label>Length (${label})</label><input type="number" id="length" value="${existing.length || ''}">
       <label>Height (${label})</label><input type="number" id="height" value="${existing.height || ''}">
       <label>Doors</label><input type="number" id="doors" value="${existing.doors || 0}">
-      <label>Avg Door Width (${label})</label><input type="number" id="doorW" value="${existing.doorW || 0.9}">
-      <label>Avg Door Height (${label})</label><input type="number" id="doorH" value="${existing.doorH || 2.1}">
+      <label>Avg Door Width (${label})</label><input type="number" id="doorW" value="${existing.doorW || defaultDoorW}">
+      <label>Avg Door Height (${label})</label><input type="number" id="doorH" value="${existing.doorH || defaultDoorH}">
       <label>Windows</label><input type="number" id="windows" value="${existing.windows || 0}">
-      <label>Avg Window Width (${label})</label><input type="number" id="winW" value="${existing.winW || 1.2}">
-      <label>Avg Window Height (${label})</label><input type="number" id="winH" value="${existing.winH || 1.2}">
+      <label>Avg Window Width (${label})</label><input type="number" id="winW" value="${existing.winW || defaultWinW}">
+      <label>Avg Window Height (${label})</label><input type="number" id="winH" value="${existing.winH || defaultWinH}">
       <button onclick="saveWallDimension()">Save Wall Data</button>
     `;
   }
@@ -315,7 +333,8 @@
 
   function generateQuotation() {
     let html = '<table><tr><th>Wall</th><th>Area (m²)</th>';
-    if (user.skimming === 'yes') html += '<th>Skim Coat</th>';
+    const showSkim = user.skimming === 'yes';
+    if (showSkim) html += '<th>Skim Coat</th>';
     html += '<th>Undercoat</th><th>Topcoat</th></tr>';
 
     let total = { area: 0, skim: 0, under: 0, top: 0 };
@@ -328,7 +347,7 @@
       const netArea = area - deduct;
 
       const skimSpread = user.project === 'new' ? 16 : 20;
-      const skim = user.skimming === 'yes' ? netArea / skimSpread : 0;
+      const skim = showSkim ? netArea / skimSpread : 0;
       const under = netArea / undercoatRate;
       const top = (netArea * 2) / topcoatRate;
 
@@ -340,12 +359,12 @@
       html += `<tr>
         <td>${w.name}</td>
         <td>${netArea.toFixed(2)}</td>`;
-      if (user.skimming === 'yes') html += `<td>${skim.toFixed(2)} bags</td>`;
+      if (showSkim) html += `<td>${skim.toFixed(2)} bags</td>`;
       html += `<td>${under.toFixed(2)}L</td><td>${top.toFixed(2)}L</td></tr>`;
     });
 
     html += `<tr><th>Total</th><th>${total.area.toFixed(2)}</th>`;
-    if (user.skimming === 'yes') html += `<th>${total.skim.toFixed(2)} bags</th>`;
+    if (showSkim) html += `<th>${total.skim.toFixed(2)} bags</th>`;
     html += `<th>${total.under.toFixed(2)}L</th><th>${total.top.toFixed(2)}L</th></tr></table>`;
 
     document.getElementById('result').innerHTML = html;
