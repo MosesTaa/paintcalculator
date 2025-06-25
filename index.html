@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Standard Paint Estimator</title>
+  <title>Standard Paint Calculator</title>
   <script src="https://js.paystack.co/v1/inline.js"></script>
   <style>
     body {
@@ -73,6 +73,12 @@
       font-size: 18px;
       margin-top: 20px;
     }
+    #paintAdvice {
+      margin-top: 20px;
+      font-size: 15px;
+      text-align: center;
+      color: #ddd;
+    }
     @media print {
       button, #restartBtn {
         display: none !important;
@@ -81,8 +87,9 @@
         background: #fff !important;
         color: #000 !important;
       }
-      #thankYouMessage {
+      #thankYouMessage, #paintAdvice {
         display: block;
+        color: #000 !important;
       }
     }
   </style>
@@ -90,8 +97,8 @@
 <body>
 <div class="container">
   <div id="page1">
-    <h2>Paint Estimator</h2>
-    <label for="name">Full Name</label>
+    <h2>Standard Paint Calculator</h2>
+    <label for="fullName">Full Name</label>
     <input type="text" id="fullName" placeholder="Enter your name">
     <label for="email">Email Address</label>
     <input type="email" id="email" placeholder="Enter your email">
@@ -110,7 +117,6 @@
     </div>
     <button onclick="goToPage2()">Next</button>
   </div>
-
   <div id="page2" class="hidden">
     <h2>Add Walls</h2>
     <input type="text" id="wallName" placeholder="e.g. Kitchen Wall">
@@ -129,29 +135,43 @@
     </select>
     <div id="wallDimensionForm"></div>
     <button onclick="backToPage2()">Back</button>
-  </div>
-
-  <div id="previewPage" class="hidden">
+      </div>
+        <div id="previewPage" class="hidden">
     <h2>Preview</h2>
     <table id="previewTable">
       <thead>
-        <tr><th>Wall</th><th>Length</th><th>Height</th><th>Doors</th><th>Windows</th><th>Action</th></tr>
+        <tr>
+          <th>Wall</th>
+          <th>Length</th>
+          <th>Height</th>
+          <th>Doors</th>
+          <th>Windows</th>
+          <th>Action</th>
+        </tr>
       </thead>
       <tbody></tbody>
     </table>
-    <button onclick="requestQuotation()">Request Quotation (KES 200)</button>
+    <button onclick="requestQuotation()">Request Quotation (KES 10)</button>
   </div>
 
   <div id="resultSection" class="hidden">
     <h2>Quotation</h2>
     <div id="result"></div>
-    <p id="thankYouMessage">Thank you for using our paint estimator!</p>
+
+    <div id="paintAdvice">
+      <p>We use the standard spread rate of <strong>9m²/l</strong> for all paints, taking into account possible spillages.</p>
+      <p>For best results, dilute paint with less than <strong>10%</strong> clean water.</p>
+    </div>
+
+    <p id="thankYouMessage">
+      Thank you for using our Standard Paint Calculator!<br>
+      <strong>Book a free consultation</strong> with our experts by calling <a href="tel:0711485963" style="color: #4fc3f7;">0711485963</a>.
+    </p>
+
     <button onclick="window.print()">Print</button>
     <button id="restartBtn" onclick="restartApp()">Make Another</button>
   </div>
-</div>
-
-<script>
+  <script>
   let user = {}, walls = [], wallData = [], currentWall = 0;
   const FEET_TO_METERS = 0.3048;
   const undercoatRate = 9;
@@ -314,9 +334,9 @@
 
   function requestQuotation() {
     const handler = PaystackPop.setup({
-      key: 'pk_test_4267eb88afba104984e24dd30e98880042131088',
+      key: 'pk_live_e440f2ef3197a5e86a27bef5c97c388bd6c35bf4',
       email: user.email,
-      amount: 20000,
+      amount: 1000, // 10 KES = 1000 kobo
       currency: 'KES',
       callback: function(response) {
         document.getElementById('previewPage').classList.add('hidden');
@@ -392,3 +412,4 @@
 </script>
 </body>
   </html>
+  
