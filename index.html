@@ -7,24 +7,19 @@
   <script src="https://js.paystack.co/v1/inline.js"></script>
   <style>
     body { background: #121212; color: #fff; font-family: Arial, sans-serif; display: flex; justify-content: center; }
-    .container { width: 95%; max-width: 900px; padding: 20px; margin-top: 20px; background: #1e1e1e; border: 1px solid #333; border-radius: 10px; }
+    .container { width: 95%; max-width: 750px; padding: 20px; margin-top: 20px; background: #1e1e1e; border: 1px solid #333; border-radius: 10px; }
     h2, h3 { text-align: center; }
-    input, select, button { width: 100%; padding: 12px; margin: 6px 0 12px 0; background: #2a2a2a; color: #fff; border: 1px solid #444; font-size: 16px; border-radius: 4px; box-sizing: border-box; }
+    input, select, button { width: 100%; padding: 12px; margin: 6px 0 12px 0; background: #2a2a2a; color: #fff; border: 1px solid #444; font-size: 16px; border-radius: 4px; }
     .hidden { display: none; }
     label { display: block; margin-top: 10px; font-weight: bold; }
-    table { width: 100%; margin-top: 10px; border-collapse: collapse; font-size: 14px; }
+    table { width: 100%; margin-top: 10px; border-collapse: collapse; }
     th, td { border: 1px solid #555; padding: 8px; text-align: center; word-wrap: break-word; }
     ul { list-style: none; padding: 0; }
     ul li { display: flex; justify-content: space-between; background: #2a2a2a; padding: 6px 10px; border-radius: 5px; margin-bottom: 4px; align-items: center; }
     ul li span button, .action-btn { font-size: 12px; padding: 6px 10px; margin: 4px 2px; border-radius: 4px; background: #fff; color: #000; border: none; cursor: pointer; }
-    .btn-row { display:flex; gap:10px; }
-    .btn-row button { width: auto; flex: 1; }
-    #thankYouMessage { text-align: center; font-size: 16px; margin-top: 12px; }
-    .small { font-size: 13px; color: #ccc; margin-top: -6px; margin-bottom: 8px; }
-    @media print {
-      button, #restartBtn, #projectType, #unit, .action-btn { display: none !important; }
-      body, .container { background: #fff !important; color: #000 !important; }
-    }
+    .action-btn-container { display: flex; flex-direction: column; gap: 5px; }
+    #thankYouMessage { text-align: center; font-size: 18px; margin-top: 20px; }
+    @media print { button, #restartBtn { display: none !important; } body, .container { background: #fff !important; color: #000 !important; } #thankYouMessage { display: block; } }
   </style>
 </head>
 <body>
@@ -46,28 +41,20 @@
         <option value="no">No</option>
       </select>
     </div>
-    <div class="btn-row">
-      <button onclick="goToPage2()">Next</button>
-    </div>
+    <button onclick="goToPage2()">Next</button>
   </div>
 
-  <!-- Page 2: Add Rooms -->
+  <!-- Page 2 -->
   <div id="page2" class="hidden">
     <h2>Add Rooms</h2>
-    <label>Room Name</label>
     <input type="text" id="roomName" placeholder="e.g. Living Room">
-    <div class="btn-row">
-      <button onclick="addRoom()">Add Room</button>
-      <button onclick="goToPage1From2()">Back</button>
-    </div>
-    <p class="small">Added rooms (click Edit to change name or Remove to delete):</p>
+    <button onclick="addRoom()">Add Room</button>
     <ul id="roomList"></ul>
-    <div class="btn-row">
-      <button onclick="goToPage3()">Proceed to dimensions</button>
-    </div>
+    <button onclick="backToPage1()">Back</button>
+    <button onclick="goToPage3()">Next</button>
   </div>
 
-  <!-- Page 3: Room Dimensions (multi) -->
+  <!-- Page 3 -->
   <div id="page3" class="hidden">
     <h2>Enter Room Dimensions</h2>
     <label>Unit</label>
@@ -76,10 +63,7 @@
       <option value="feet">Feet</option>
     </select>
     <div id="wallDimensionForm"></div>
-    <div class="btn-row">
-      <button onclick="backToPage2()">Back</button>
-      <button onclick="saveRoomDimension()">Save Room Data</button>
-    </div>
+    <button onclick="backToPage2()">Back</button>
   </div>
 
   <!-- Preview Page -->
@@ -91,10 +75,8 @@
       </thead>
       <tbody></tbody>
     </table>
-    <div class="btn-row">
-      <button onclick="backToPage3()">Back</button>
-      <button onclick="goToQuotationPage()">Request Quotation</button>
-    </div>
+    <button onclick="backToPage3()">Back</button>
+    <button onclick="goToQuotationPage()">Proceed</button>
   </div>
 
   <!-- Quotation Request Page -->
@@ -105,70 +87,46 @@
     <input type="text" id="fullName" placeholder="Enter your full name">
     <label>Email Address</label>
     <input type="email" id="email" placeholder="Enter your email">
-    <div class="btn-row">
-      <button onclick="backToPreview()">Back</button>
-      <button onclick="requestQuotation()">Request Quotation (KES 10)</button>
-    </div>
+    <button onclick="backToPreview()">Back</button>
+    <button onclick="requestQuotation()">Request Quotation (KES 10)</button>
   </div>
 
   <!-- Result Page -->
   <div id="resultSection" class="hidden">
-    <h2>Quotation Report</h2>
+    <h2>Quotation</h2>
     <div id="result"></div>
-
-    <p id="thankYouMessage">
-      Thank you for using our paint calculator!<br>
-      For a free consultation about paint colour, application method or any paint-related question, call <strong>0711485963 - Jennifer</strong>.
-    </p>
-
-    <!-- Hidden print button (not visible) kept in markup but not shown to user;
-         printing is auto triggered when results are shown -->
-    <button id="hiddenPrintBtn" class="hidden" onclick="window.print()">Print</button>
-    <div class="btn-row">
-      <button id="restartBtn" onclick="restartApp()">Make Another</button>
-    </div>
+    <p id="thankYouMessage">Thank you for using our paint calculator!</p>
+    <button onclick="window.print()">Print</button>
+    <button id="restartBtn" onclick="restartApp()">Make Another</button>
   </div>
 </div>
 
 <script>
-/* ====== Data and constants ====== */
 let user = {}, rooms = [], roomData = [], currentRoom = 0;
 const FEET_TO_METERS = 0.3048;
 
-/* ====== Navigation & UI ====== */
+// Project type logic
 document.getElementById('projectType').addEventListener('change', () => {
-  const group = document.getElementById('skimmingGroup');
-  group.classList.remove('hidden');
+  document.getElementById('skimmingGroup').classList.remove('hidden');
 });
 
 function goToPage2() {
   const project = document.getElementById('projectType').value;
+  const skimmingEl = document.getElementById('skimming');
   const skimmingVisible = !document.getElementById('skimmingGroup').classList.contains('hidden');
-  const skimming = skimmingVisible ? document.getElementById('skimming').value : '';
+  const skimming = skimmingVisible ? skimmingEl.value : '';
   if (!project || (skimmingVisible && !skimming)) return alert("Please select all required fields.");
   user.project = project; user.skimming = skimming;
-  show('page2'); hide('page1');
+  document.getElementById('page1').classList.add('hidden');
+  document.getElementById('page2').classList.remove('hidden');
 }
 
-function goToPage1From2() { show('page1'); hide('page2'); }
+function backToPage1() { document.getElementById('page2').classList.add('hidden'); document.getElementById('page1').classList.remove('hidden'); }
 
-function backToPage2() { show('page2'); hide('page3'); }
-function backToPage1() { show('page1'); hide('page2'); }
-function backToPage3() { show('page3'); hide('previewPage'); }
-function backToPreview() { show('previewPage'); hide('quotationPage'); }
-
-function show(id) { document.getElementById(id).classList.remove('hidden'); }
-function hide(id) { document.getElementById(id).classList.add('hidden'); }
-
-/* ====== Rooms management ====== */
 function addRoom() {
   const name = document.getElementById('roomName').value.trim();
-  if (!name) return alert("Enter room name.");
-  if (rooms.includes(name)) return alert("Enter a unique room name.");
-  rooms.push(name);
-  roomData.push({ name }); // placeholder until dimensions filled
-  document.getElementById('roomName').value = "";
-  renderRooms();
+  if (!name || rooms.includes(name)) return alert("Enter a unique room name.");
+  rooms.push(name); roomData.push({ name }); renderRooms(); document.getElementById('roomName').value = "";
 }
 
 function renderRooms() {
@@ -181,64 +139,43 @@ function renderRooms() {
   });
 }
 
-function removeRoom(i) {
-  if (!confirm('Remove room "' + rooms[i] + '"?')) return;
-  rooms.splice(i,1); roomData.splice(i,1);
-  renderRooms();
-}
+function removeRoom(i) { rooms.splice(i, 1); roomData.splice(i, 1); renderRooms(); }
 
 function editRoomName(i) {
   const newName = prompt("Enter new room name", rooms[i]);
-  if (!newName) return;
-  if (rooms.includes(newName) && rooms[i] !== newName) return alert("Room name must be unique.");
-  rooms[i] = newName;
-  if (roomData[i]) roomData[i].name = newName;
-  renderRooms();
+  if (newName && !rooms.includes(newName)) { rooms[i] = newName; roomData[i].name = newName; renderRooms(); }
+  else if (rooms.includes(newName)) alert("Room name must be unique.");
 }
 
-/* ====== Dimension form rendering and saving ====== */
-function goToPage3() {
-  if (rooms.length === 0) return alert("Add at least one room.");
-  currentRoom = 0;
-  show('page3'); hide('page2');
-  renderRoomDimension();
-}
+function goToPage3() { if (rooms.length === 0) return alert("Add at least one room."); currentRoom = 0; document.getElementById('page2').classList.add('hidden'); document.getElementById('page3').classList.remove('hidden'); renderRoomDimension(); }
+function backToPage2() { document.getElementById('page3').classList.add('hidden'); document.getElementById('page2').classList.remove('hidden'); }
+
+function backToPage3() { document.getElementById('previewPage').classList.add('hidden'); document.getElementById('page3').classList.remove('hidden'); }
+function backToPreview() { document.getElementById('quotationPage').classList.add('hidden'); document.getElementById('previewPage').classList.remove('hidden'); }
 
 function renderRoomDimension() {
-  const r = rooms[currentRoom];
-  const u = document.getElementById('unit').value;
-  const label = u === 'feet' ? 'ft' : 'm';
-
-  // sensible defaults in chosen unit (door ~0.9x2.1 m ; window ~1.2x1.2 m)
+  const r = rooms[currentRoom], u = document.getElementById('unit').value, label = u === 'feet' ? 'ft' : 'm';
   const defaultDoorW = u === 'feet' ? (0.9 / FEET_TO_METERS).toFixed(2) : 0.9;
   const defaultDoorH = u === 'feet' ? (2.1 / FEET_TO_METERS).toFixed(2) : 2.1;
   const defaultWinW = u === 'feet' ? (1.2 / FEET_TO_METERS).toFixed(2) : 1.2;
   const defaultWinH = u === 'feet' ? (1.2 / FEET_TO_METERS).toFixed(2) : 1.2;
-
-  const existing = roomData[currentRoom] || {};
-
+  const existing = roomData[currentRoom];
   document.getElementById('wallDimensionForm').innerHTML = `
-    <h3>Room ${currentRoom+1} of ${rooms.length} — ${r}</h3>
-    <label>Length (${label})</label><input type="number" id="length" min="0" step="0.01" value="${existing.length || ''}">
-    <label>Width (${label})</label><input type="number" id="width" min="0" step="0.01" value="${existing.width || ''}">
-    <label>Height (${label})</label><input type="number" id="height" min="0" step="0.01" value="${existing.height || ''}">
-    <label>Doors (count)</label><input type="number" id="doors" min="0" step="1" value="${existing.doors || 0}">
-    <label>Avg Door Width (${label})</label><input type="number" id="doorW" min="0" step="0.01" value="${existing.doorW || defaultDoorW}">
-    <label>Avg Door Height (${label})</label><input type="number" id="doorH" min="0" step="0.01" value="${existing.doorH || defaultDoorH}">
-    <label>Windows (count)</label><input type="number" id="windows" min="0" step="1" value="${existing.windows || 0}">
-    <label>Avg Window Width (${label})</label><input type="number" id="winW" min="0" step="0.01" value="${existing.winW || defaultWinW}">
-    <label>Avg Window Height (${label})</label><input type="number" id="winH" min="0" step="0.01" value="${existing.winH || defaultWinH}">
-    <div class="btn-row" style="margin-top:8px;">
-      <button onclick="prevRoom()">Previous</button>
-      <button onclick="nextRoom()">Next</button>
-    </div>
-    <p class="small">Use Previous/Next to move between rooms. Click Save Room Data to persist this room (you can edit later).</p>
+    <h3>${r}</h3>
+    <label>Length (${label})</label><input type="number" id="length" value="${existing.length || ''}">
+    <label>Width (${label})</label><input type="number" id="width" value="${existing.width || ''}">
+    <label>Height (${label})</label><input type="number" id="height" value="${existing.height || ''}">
+    <label>Doors</label><input type="number" id="doors" value="${existing.doors || 0}">
+    <label>Avg Door Width (${label})</label><input type="number" id="doorW" value="${existing.doorW || defaultDoorW}">
+    <label>Avg Door Height (${label})</label><input type="number" id="doorH" value="${existing.doorH || defaultDoorH}">
+    <label>Windows</label><input type="number" id="windows" value="${existing.windows || 0}">
+    <label>Avg Window Width (${label})</label><input type="number" id="winW" value="${existing.winW || defaultWinW}">
+    <label>Avg Window Height (${label})</label><input type="number" id="winH" value="${existing.winH || defaultWinH}">
+    <button onclick="saveRoomDimension()">Save Room Data</button>
   `;
 }
 
 function saveRoomDimension() {
-  // read values as entered (in chosen unit)
-  const u = document.getElementById('unit').value;
   const length = parseFloat(document.getElementById('length').value);
   const width = parseFloat(document.getElementById('width').value);
   const height = parseFloat(document.getElementById('height').value);
@@ -248,77 +185,21 @@ function saveRoomDimension() {
   const windows = parseInt(document.getElementById('windows').value) || 0;
   const winW = parseFloat(document.getElementById('winW').value);
   const winH = parseFloat(document.getElementById('winH').value);
-
-  if (!length || !width || !height) return alert("Please enter valid length, width and height for the room.");
-
-  roomData[currentRoom] = {
-    name: rooms[currentRoom],
-    length, width, height,
-    doors, doorW, doorH,
-    windows, winW, winH,
-    unit: u
-  };
-
-  // if more rooms remain move to next; otherwise go to preview
-  if (currentRoom < rooms.length - 1) {
-    currentRoom++;
-    renderRoomDimension();
-  } else {
-    goToPreview();
-  }
+  if (!length || !width || !height) return alert("Please enter valid dimensions.");
+  roomData[currentRoom] = { name: rooms[currentRoom], length, width, height, doors, doorW, doorH, windows, winW, winH };
+  if (currentRoom < rooms.length - 1) { currentRoom++; renderRoomDimension(); } else { goToPreview(); }
 }
 
-function prevRoom() {
-  if (currentRoom > 0) {
-    currentRoom--;
-    renderRoomDimension();
-  } else {
-    alert('This is the first room');
-  }
-}
-
-function nextRoom() {
-  if (currentRoom < rooms.length - 1) {
-    currentRoom++;
-    renderRoomDimension();
-  } else {
-    alert('This is the last room. Click Save Room Data to finish.');
-  }
-}
-
-/* Edit room from preview */
-function editRoomDimension(index) {
-  currentRoom = index;
-  hide('previewPage'); show('page3');
-  // set unit select to the stored unit for that room (if available)
-  if (roomData[index] && roomData[index].unit) {
-    document.getElementById('unit').value = roomData[index].unit;
-  }
-  renderRoomDimension();
-}
-
-/* ====== Preview ====== */
 function goToPreview() {
-  // ensure all rooms have data
-  for (let i = 0; i < rooms.length; i++) {
-    if (!roomData[i] || !roomData[i].length) {
-      alert('Please fill dimensions for all rooms. Room: ' + rooms[i]);
-      currentRoom = i;
-      show('page3'); hide('page2');
-      renderRoomDimension();
-      return;
-    }
-  }
-
-  hide('page3'); show('previewPage');
+  document.getElementById('page3').classList.add('hidden');
+  document.getElementById('previewPage').classList.remove('hidden');
   const tbody = document.querySelector("#previewTable tbody"); tbody.innerHTML = "";
   roomData.forEach((room, i) => {
-    const unit = room.unit || document.getElementById('unit').value;
     tbody.innerHTML += `<tr>
         <td>${room.name}</td>
-        <td>${room.length} ${unit === 'feet' ? 'ft' : 'm'}</td>
-        <td>${room.width} ${unit === 'feet' ? 'ft' : 'm'}</td>
-        <td>${room.height} ${unit === 'feet' ? 'ft' : 'm'}</td>
+        <td>${room.length}</td>
+        <td>${room.width}</td>
+        <td>${room.height}</td>
         <td>${room.doors}</td>
         <td>${room.windows}</td>
         <td><button onclick="editRoomDimension(${i})">Edit</button></td>
@@ -326,156 +207,58 @@ function goToPreview() {
   });
 }
 
-/* ====== Conversion helper ====== */
-function toMeters(value, unit) {
-  if (unit === 'feet') return value * FEET_TO_METERS;
-  return value;
+function goToQuotationPage() {
+  document.getElementById('previewPage').classList.add('hidden');
+  document.getElementById('quotationPage').classList.remove('hidden');
 }
 
-/* ====== QUOTATION CALCULATIONS (detailed per room) ====== */
-function calculateDetailedQuotation() {
-  // totals
-  let totalUnder = 0, totalTop = 0, totalSkimBags = 0, totalDoorLitres = 0, totalWindowLitres = 0;
-  let rows = '';
+function editRoomDimension(index) { currentRoom = index; document.getElementById('previewPage').classList.add('hidden'); document.getElementById('page3').classList.remove('hidden'); renderRoomDimension(); }
 
-  // iterate rooms
+// --- QUOTATION CALC ---
+function calculateQuotation() {
+  let totalArea = 0;
   roomData.forEach(r => {
-    // convert dims to meters
-    const u = r.unit || 'meters';
-    const L = toMeters(r.length, u);
-    const W = toMeters(r.width, u);
-    const H = toMeters(r.height, u);
-    const doors = r.doors || 0;
-    const doorW = toMeters(r.doorW || 0, u);
-    const doorH = toMeters(r.doorH || 0, u);
-    const windows = r.windows || 0;
-    const winW = toMeters(r.winW || 0, u);
-    const winH = toMeters(r.winH || 0, u);
-
-    // Areas (m^2)
-    const wallArea = 2 * (L + W) * H; // perimeter * height
-    let doorArea = doors * doorW * doorH;      // area total of doors
-    let windowArea = windows * winW * winH;    // area total of windows
-
-    // Apply user formulas:
-    doorArea = doorArea * 2;       // door_area = door_area * 2
-    windowArea = windowArea / 2;   // window_area = window_area / 2
-
-    // Paintable area excludes doors and windows
-    const paintableArea = Math.max(0, wallArea - (doorArea + windowArea));
-
-    // Undercoat and topcoat (litres) using your previous spread constants (9 and 11)
-    // Rounded to nearest litre (as requested)
-    const undercoatL = Math.round(paintableArea / 9);
-    const topcoatL = Math.round(paintableArea / 11);
-
-    // Skim coat (bags) logic: per-room = paintableArea / 10 (if skimming requested)
-    const skimBags = (user.skimming === 'yes') ? Math.round(paintableArea / 10) : 0;
-
-    // Doors and windows paint volumes using spread rate 8 m^2 / L
-    const doorLitres = Math.round(doorArea / 8);
-    const windowLitres = Math.round(windowArea / 8);
-
-    // accumulate totals
-    totalUnder += undercoatL;
-    totalTop += topcoatL;
-    totalSkimBags += skimBags;
-    totalDoorLitres += doorLitres;
-    totalWindowLitres += windowLitres;
-
-    // build row
-    rows += `<tr>
-      <td>${escapeHtml(r.name)}</td>
-      <td>${wallArea.toFixed(2)}</td>
-      <td>${doorArea.toFixed(2)}</td>
-      <td>${windowArea.toFixed(2)}</td>
-      <td>${undercoatL}</td>
-      <td>${topcoatL}</td>
-      <td>${skimBags}</td>
-      <td>${doorLitres}</td>
-      <td>${windowLitres}</td>
-    </tr>`;
+    let wallArea = 2 * (r.length + r.width) * r.height;
+    let doorArea = r.doors * r.doorW * r.doorH;
+    let windowArea = r.windows * r.winW * r.winH;
+    totalArea += wallArea - (doorArea + windowArea);
   });
 
-  // totals row
-  rows += `<tr style="font-weight:bold; background:#222;">
-      <td>Total</td>
-      <td>-</td><td>-</td><td>-</td>
-      <td>${totalUnder}</td>
-      <td>${totalTop}</td>
-      <td>${totalSkimBags}</td>
-      <td>${totalDoorLitres}</td>
-      <td>${totalWindowLitres}</td>
-    </tr>`;
+  let undercoat = totalArea / 9; // litres
+  let topcoat = totalArea / 11; // litres
+  let skimCoat = user.skimming === 'yes' ? totalArea / 10 : 0; // bags
 
-  // full table html
-  const tableHtml = `
-    <table>
-      <thead>
-        <tr>
-          <th>Room</th>
-          <th>Wall Area (m²)</th>
-          <th>Door Area (m²)</th>
-          <th>Window Area (m²)</th>
-          <th>Undercoat (L)</th>
-          <th>Topcoat (L)</th>
-          <th>Skim Bags</th>
-          <th>Door Paint (L)</th>
-          <th>Window Paint (L)</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rows}
-      </tbody>
-    </table>
-  `;
-  return tableHtml;
+  return { totalArea, undercoat, topcoat, skimCoat };
 }
 
-/* ====== Payment & Result display ====== */
+// --- PAYMENT + RESULT ---
 function requestQuotation() {
   const name = document.getElementById('fullName').value.trim();
   const email = document.getElementById('email').value.trim();
   if (!name || !email) return alert("Please enter your details.");
 
-  // small guard: ensure room data present
-  if (roomData.length === 0) return alert("No room data found.");
-
   let handler = PaystackPop.setup({
-    key: pk_test_4267eb88afba104984e24dd30e98880042131088    email: email,
-    amount: 10 * 100, // KES 10 in cents/kobo
+    key: 'pk_live_e440f2ef3197a5e86a27bef5c97c388bd6c35bf4', // Live Paystack key
+    email: email,
+    amount: 10 * 100, // in kobo
     currency: 'KES',
     callback: function(response) {
-      // show results
-      hide('quotationPage'); show('resultSection');
-      document.getElementById('result').innerHTML = calculateDetailedQuotation();
-
-      // automatically trigger print dialog (no visible print button)
-      // slight delay to let the DOM render
-      setTimeout(() => {
-        try { window.print(); } catch (e) { console.warn('Print failed', e); }
-      }, 600);
+      let q = calculateQuotation();
+      document.getElementById('quotationPage').classList.add('hidden');
+      document.getElementById('resultSection').classList.remove('hidden');
+      document.getElementById('result').innerHTML = `
+        <p><strong>Total Area:</strong> ${q.totalArea.toFixed(2)} m²</p>
+        <p><strong>Undercoat:</strong> ${q.undercoat.toFixed(1)} litres</p>
+        <p><strong>Topcoat:</strong> ${q.topcoat.toFixed(1)} litres</p>
+        ${q.skimCoat ? `<p><strong>Skim Coat:</strong> ${q.skimCoat.toFixed(1)} bags</p>` : ""}
+      `;
     },
     onClose: function() { alert('Transaction was not completed'); }
   });
   handler.openIframe();
 }
 
-/* ====== Utilities ====== */
 function restartApp() { location.reload(); }
-function escapeHtml(text) {
-  if (!text) return '';
-  return text.replace(/[&<>"'`=\/]/g, function(s) {
-    return ({
-      '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;', '/':'&#x2F;', '`':'&#x60;', '=':'&#x3D;'
-    })[s];
-  });
-}
-
-/* ====== Initialize UI ====== */
-// show page1 by default
-show('page1');
-hide('page2'); hide('page3'); hide('previewPage'); hide('quotationPage'); hide('resultSection');
 </script>
 </body>
 </html>
