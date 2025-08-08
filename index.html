@@ -442,8 +442,7 @@ function requestQuotation() {
   if (roomData.length === 0) return alert("No room data found.");
 
   let handler = PaystackPop.setup({
-    key: 'pk_live_e440f2ef3197a5e86a27bef5c97c388bd6c35bf4', // your live key (as provided)
-    email: email,
+    key: pk_test_4267eb88afba104984e24dd30e98880042131088    email: email,
     amount: 10 * 100, // KES 10 in cents/kobo
     currency: 'KES',
     callback: function(response) {
