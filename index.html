@@ -225,8 +225,8 @@ function calculateQuotationPerRoom() {
     const windowArea = r.windows * r.winW * r.winH; // Full window area
     const netArea = wallArea - (r.doors * r.doorW * r.doorH + r.windows * r.winW * r.winH);
 
-    const undercoat = (netArea / 9) * 2; // Two coats
-    const topcoat = netArea / 11;
+    const undercoat = (netArea / 12) * 2; // Two coats
+    const topcoat = netArea / 9;
     const doorPaint = doorArea / 8;
     const windowPaint = Math.round((windowArea / 8) * 2) / 2; // Nearest 0.5 L
     let skimRate = 0;
