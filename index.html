@@ -215,50 +215,119 @@ function goToQuotationPage() {
 function editRoomDimension(index) { currentRoom = index; document.getElementById('previewPage').classList.add('hidden'); document.getElementById('page3').classList.remove('hidden'); renderRoomDimension(); }
 
 // --- QUOTATION CALC ---
-function calculateQuotation() {
-  let totalArea = 0;
+  
+function calculateQuotationPerRoom() {
+  let results = [], total = { area: 0, undercoat: 0, topcoat: 0, skim: 0, doorPaint: 0, windowPaint: 0 };
+
   roomData.forEach(r => {
-    let wallArea = 2 * (r.length + r.width) * r.height;
-    let doorArea = r.doors * r.doorW * r.doorH;
-    let windowArea = r.windows * r.winW * r.winH;
-    totalArea += wallArea - (doorArea + windowArea);
+    const wallArea = 2 * (r.length + r.width) * r.height;
+    const doorArea = r.doors * r.doorW * r.doorH * 2; // doors painted both sides
+    const windowArea = (r.windows * r.winW * r.winH) / 2; // windows partially painted
+    const netArea = wallArea - (r.doors * r.doorW * r.doorH + r.windows * r.winW * r.winH);
+
+    const undercoat = netArea / 9;
+    const topcoat = netArea / 11;
+    const doorPaint = doorArea / 8;
+    const windowPaint = windowArea / 8;
+    let skimRate = 0;
+    if (user.skimming === 'yes') {
+      skimRate = user.project === 'renovation' ? 50 : 36;
+    }
+    const skim = user.skimming === 'yes' ? netArea / skimRate : 0;
+
+    results.push({
+      name: r.name,
+      area: netArea,
+      undercoat,
+      topcoat,
+      skim,
+      doorPaint,
+      windowPaint
+    });
+
+    total.area += netArea;
+    total.undercoat += undercoat;
+    total.topcoat += topcoat;
+    total.skim += skim;
+    total.doorPaint += doorPaint;
+    total.windowPaint += windowPaint;
   });
 
-  let undercoat = totalArea / 9; // litres
-  let topcoat = totalArea / 11; // litres
-  let skimCoat = user.skimming === 'yes' ? totalArea / 10 : 0; // bags
-
-  return { totalArea, undercoat, topcoat, skimCoat };
+  return { rooms: results, total };
 }
 
-// --- PAYMENT + RESULT ---
 function requestQuotation() {
   const name = document.getElementById('fullName').value.trim();
   const email = document.getElementById('email').value.trim();
   if (!name || !email) return alert("Please enter your details.");
 
   let handler = PaystackPop.setup({
-    key: 'pk_live_e440f2ef3197a5e86a27bef5c97c388bd6c35bf4', // Live Paystack key
+    key: 'pk_test_4267eb88afba104984e24dd30e98880042131088',
     email: email,
-    amount: 10 * 100, // in kobo
+    amount: 10 * 100,
     currency: 'KES',
-    callback: function(response) {
-      let q = calculateQuotation();
+    callback: function (response) {
+      const q = calculateQuotationPerRoom();
       document.getElementById('quotationPage').classList.add('hidden');
       document.getElementById('resultSection').classList.remove('hidden');
-      document.getElementById('result').innerHTML = `
-        <p><strong>Total Area:</strong> ${q.totalArea.toFixed(2)} m²</p>
-        <p><strong>Undercoat:</strong> ${q.undercoat.toFixed(1)} litres</p>
-        <p><strong>Topcoat:</strong> ${q.topcoat.toFixed(1)} litres</p>
-        ${q.skimCoat ? `<p><strong>Skim Coat:</strong> ${q.skimCoat.toFixed(1)} bags</p>` : ""}
+
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>Room</th>
+              <th>Area (m²)</th>
+              <th>Undercoat (L)</th>
+              <th>Topcoat (L)</th>
+              <th>Skim Coat (Bags)</th>
+              <th>Door Paint (L)</th>
+              <th>Window Paint (L)</th>
+            </tr>
+          </thead>
+          <tbody>
       `;
+
+      q.rooms.forEach(r => {
+        html += `
+          <tr>
+            <td>${r.name}</td>
+            <td>${Math.round(r.area)}</td>
+            <td>${Math.round(r.undercoat)}</td>
+            <td>${Math.round(r.topcoat)}</td>
+            <td>${Math.round(r.skim)}</td>
+            <td>${Math.round(r.doorPaint)}</td>
+            <td>${Math.round(r.windowPaint)}</td>
+          </tr>
+        `;
+      });
+
+      html += `
+        <tr style="font-weight:bold;">
+          <td>Total</td>
+          <td>${Math.round(q.total.area)}</td>
+          <td>${Math.round(q.total.undercoat)}</td>
+          <td>${Math.round(q.total.topcoat)}</td>
+          <td>${Math.round(q.total.skim)}</td>
+          <td>${Math.round(q.total.doorPaint)}</td>
+          <td>${Math.round(q.total.windowPaint)}</td>
+        </tr>
+      </tbody>
+      </table>
+      <p id="thankYouMessage" style="margin-top: 20px;">
+        Thank you for using our paint calculator!<br />
+        For a free consultation on paint colour or mode of application, call <strong>0711485963 - Jennifer</strong>
+      </p>
+      `;
+
+      document.getElementById('result').innerHTML = html;
+      window.print();
     },
-    onClose: function() { alert('Transaction was not completed'); }
+    onClose: function () {
+      alert('Transaction was not completed');
+    }
   });
   handler.openIframe();
 }
-
-function restartApp() { location.reload(); }
 </script>
 </body>
 </html>
