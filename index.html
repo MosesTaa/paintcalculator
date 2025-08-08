@@ -222,13 +222,13 @@ function calculateQuotationPerRoom() {
   roomData.forEach(r => {
     const wallArea = 2 * (r.length + r.width) * r.height;
     const doorArea = r.doors * r.doorW * r.doorH * 2; // doors painted both sides
-    const windowArea = (r.windows * r.winW * r.winH) / 2; // windows partially painted
+    const windowArea = r.windows * r.winW * r.winH; // Full window area
     const netArea = wallArea - (r.doors * r.doorW * r.doorH + r.windows * r.winW * r.winH);
 
-    const undercoat = netArea / 9;
+    const undercoat = (netArea / 9) * 2; // Two coats
     const topcoat = netArea / 11;
     const doorPaint = doorArea / 8;
-    const windowPaint = windowArea / 8;
+    const windowPaint = Math.round((windowArea / 8) * 2) / 2; // Nearest 0.5 L
     let skimRate = 0;
     if (user.skimming === 'yes') {
       skimRate = user.project === 'renovation' ? 50 : 36;
@@ -327,6 +327,27 @@ function requestQuotation() {
     }
   });
   handler.openIframe();
+}
+  function restartApp() {
+  user = {};
+  rooms = [];
+  roomData = [];
+  currentRoom = 0;
+
+  // Reset all pages
+  document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+  document.getElementById('page1').classList.remove('hidden');
+
+  // Clear inputs
+  document.getElementById('projectType').value = "";
+  document.getElementById('skimming').value = "";
+  document.getElementById('roomName').value = "";
+  document.getElementById('roomList').innerHTML = "";
+  document.getElementById('wallDimensionForm').innerHTML = "";
+  document.getElementById('unit').value = "meters";
+  document.getElementById('fullName').value = "";
+  document.getElementById('email').value = "";
+  document.getElementById('result').innerHTML = "";
 }
 </script>
 </body>
