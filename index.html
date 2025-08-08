@@ -105,7 +105,6 @@
 let user = {}, rooms = [], roomData = [], currentRoom = 0;
 const FEET_TO_METERS = 0.3048;
 
-// Project type logic
 document.getElementById('projectType').addEventListener('change', () => {
   document.getElementById('skimmingGroup').classList.remove('hidden');
 });
@@ -214,37 +213,26 @@ function goToQuotationPage() {
 
 function editRoomDimension(index) { currentRoom = index; document.getElementById('previewPage').classList.add('hidden'); document.getElementById('page3').classList.remove('hidden'); renderRoomDimension(); }
 
-// --- QUOTATION CALC ---
-  
 function calculateQuotationPerRoom() {
   let results = [], total = { area: 0, undercoat: 0, topcoat: 0, skim: 0, doorPaint: 0, windowPaint: 0 };
 
   roomData.forEach(r => {
     const wallArea = 2 * (r.length + r.width) * r.height;
-    const doorArea = r.doors * r.doorW * r.doorH * 2; // doors painted both sides
-    const windowArea = (r.windows * r.winW * r.winH) / 2; // windows partially painted
+    const doorArea = r.doors * r.doorW * r.doorH * 2;
+    const windowArea = r.windows * r.winW * r.winH;
     const netArea = wallArea - (r.doors * r.doorW * r.doorH + r.windows * r.winW * r.winH);
 
-    const undercoat = netArea / 9;
+    const undercoat = (netArea / 9) * 2;
     const topcoat = netArea / 11;
     const doorPaint = doorArea / 8;
-    const windowPaint = windowArea / 8;
+    const windowPaint = Math.round((windowArea / 8) * 2) / 2;
     let skimRate = 0;
     if (user.skimming === 'yes') {
       skimRate = user.project === 'renovation' ? 50 : 36;
     }
     const skim = user.skimming === 'yes' ? netArea / skimRate : 0;
 
-    results.push({
-      name: r.name,
-      area: netArea,
-      undercoat,
-      topcoat,
-      skim,
-      doorPaint,
-      windowPaint
-    });
-
+    results.push({ name: r.name, area: netArea, undercoat, topcoat, skim, doorPaint, windowPaint });
     total.area += netArea;
     total.undercoat += undercoat;
     total.topcoat += topcoat;
@@ -296,7 +284,7 @@ function requestQuotation() {
             <td>${Math.round(r.topcoat)}</td>
             <td>${Math.round(r.skim)}</td>
             <td>${Math.round(r.doorPaint)}</td>
-            <td>${Math.round(r.windowPaint)}</td>
+            <td>${r.windowPaint.toFixed(1)}</td>
           </tr>
         `;
       });
@@ -309,7 +297,7 @@ function requestQuotation() {
           <td>${Math.round(q.total.topcoat)}</td>
           <td>${Math.round(q.total.skim)}</td>
           <td>${Math.round(q.total.doorPaint)}</td>
-          <td>${Math.round(q.total.windowPaint)}</td>
+          <td>${q.total.windowPaint.toFixed(1)}</td>
         </tr>
       </tbody>
       </table>
@@ -328,6 +316,16 @@ function requestQuotation() {
   });
   handler.openIframe();
 }
-</script>
-</body>
-</html>
+
+function restartApp() {
+  user = {};
+  rooms = [];
+  roomData = [];
+  currentRoom = 0;
+
+  document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+  document.getElementById('page1').classList.remove('hidden');
+
+  document.getElementById('projectType').value = "";
+  document.getElementById('skimming').value = "";
+  document.getElementById('roomName').value = "";
