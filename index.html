@@ -88,7 +88,7 @@
     <label>Email Address</label>
     <input type="email" id="email" placeholder="Enter your email">
     <button onclick="backToPreview()">Back</button>
-    <button onclick="requestQuotation()">Request Quotation (KES 10)</button>
+    <button onclick="requestQuotation()">Request Quotation (KES 20)</button>
   </div>
 
   <!-- Result Page -->
@@ -264,7 +264,7 @@ function requestQuotation() {
   let handler = PaystackPop.setup({
     key: 'pk_live_e440f2ef3197a5e86a27bef5c97c388bd6c35bf4',
     email: email,
-    amount: 10 * 100,
+    amount: 20 * 100,
     currency: 'KES',
     callback: function (response) {
       const q = calculateQuotationPerRoom();
